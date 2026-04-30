@@ -16,7 +16,7 @@ print ("/============================/\n")
 for i in range (101):
     barra = "█" * (i // 5)
     print ("\033[94m" f"\rCargando : \033[0m \033[92m[{barra:<20}] {i}%" , end= " ")
-    time.sleep(0.0)
+    time.sleep(0.1)
 
 print ()
 print ()
@@ -46,7 +46,7 @@ print ("Esto puede demorar unos minutos.\n")
 for i in range (101):
     barra = "█" * (i // 5)
     print ("\033[94m" f"\rCargando : \033[0m \033[92m[{barra:<20}] {i}%" , end= " ")
-    time.sleep(0.0)
+    time.sleep(0.2)
 
 print ()
 
