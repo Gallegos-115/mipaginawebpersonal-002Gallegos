@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Héctor Gallegos | Portfolio</title>
+
+<!-- CDN -->
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme:{ extend:{ colors:{ primary:'#06b6d4' } } }
+}
+</script>
+</head>
+
+<body class="bg-gray-950 text-gray-200 font-sans">
+
+<div id="app">
+
+<!-- NAV -->
+<nav class="fixed w-full z-50 backdrop-blur bg-gray-950/70 border-b border-gray-800">
+<div class="max-w-6xl mx-auto flex justify-between items-center p-4">
+<h1 class="font-bold text-lg tracking-widest text-primary">HG</h1>
+<div class="flex items-center gap-4 text-sm">
+<button @click="toggleLang">{{ lang==='es'?'EN':'ES' }}</button>
+<button @click="toggleTheme">🌓</button>
+</div>
+</div>
+</nav>
+
+<!-- HERO -->
+<section class="min-h-screen flex flex-col justify-center items-center text-center px-6 relative overflow-hidden">
+<div id="tsparticles" class="absolute inset-0"></div>
+
+<img src="https://tse2.mm.bing.net/th/id/OIP.oc4gntKcJTXmQJsy4umvuAHaE8?rs=1&pid=ImgDetMain&o=7&rm=3"
+class="w-40 h-40 object-cover rounded-full border-4 border-primary shadow-lg mb-6 z-10">
+
+<h1 class="text-4xl md:text-5xl font-bold z-10">Héctor Gallegos</h1>
+
+<p class="text-primary mt-3 text-lg z-10">
+<span id="typed"></span>
+</p>
+
+<p class="max-w-xl mt-6 text-gray-400 z-10">
+{{ t.heroSub }}
+</p>
+</section>
+
+<!-- ABOUT -->
+<section class="max-w-5xl mx-auto px-6 py-20" data-aos="fade-up">
+<h2 class="text-3xl font-bold">{{ t.about }}</h2>
+<p class="text-gray-400 mt-4">{{ t.aboutText }}</p>
+</section>
+
+<!-- SKILLS -->
+<section class="bg-gray-900 py-20" data-aos="fade-up">
+<div class="max-w-6xl mx-auto px-6">
+<h2 class="text-3xl font-bold text-center">{{ t.skills }}</h2>
+
+<div class="grid md:grid-cols-3 gap-6 mt-10">
+<div v-for="s in skills" class="bg-gray-800 p-6 rounded-xl border border-gray-700 hover:-translate-y-2 transition">
+<i :class="s.icon + ' text-primary text-2xl mb-3'"></i>
+<h3>{{ s.name }}</h3>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- PROJECTS -->
+<section class="py-20" data-aos="fade-up">
+<div class="max-w-6xl mx-auto px-6">
+<h2 class="text-3xl font-bold text-center">{{ t.projects }}</h2>
+
+<div class="grid md:grid-cols-3 gap-8 mt-10">
+<div v-for="p in projects" class="bg-gray-800 p-6 rounded-xl border border-gray-700 hover:scale-105 transition">
+<h3 class="font-bold text-lg">{{ p.name }}</h3>
+<p class="text-gray-400 text-sm mt-2">{{ p.desc }}</p>
+<p class="text-primary text-xs mt-2">{{ p.tech }}</p>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="bg-gray-900 py-20" data-aos="fade-up">
+<div class="max-w-5xl mx-auto px-6">
+<h2 class="text-3xl font-bold text-center">{{ t.exp }}</h2>
+
+<div class="mt-10 space-y-6">
+<div v-for="e in exp" class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+<h3 class="font-bold">{{ e.title }}</h3>
+<p class="text-gray-400 text-sm">{{ e.desc }}</p>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- GITHUB -->
+<section class="py-20 text-center" data-aos="fade-up">
+<h2 class="text-3xl font-bold">GitHub</h2>
+<a href="https://github.com/Gallegos-115" target="_blank" class="text-primary mt-4 block">
+<i class="fab fa-github text-3xl"></i>
+<p class="mt-2">github.com/Gallegos-115</p>
+</a>
+</section>
+
+<!-- INTERESTS -->
+<section class="bg-gray-900 py-20 text-center" data-aos="fade-up">
+<h2 class="text-3xl font-bold">{{ t.interests }}</h2>
+<div class="flex justify-center gap-10 mt-10 text-4xl">
+<div>🎸</div>
+<div>🎮</div>
+<div>🎧</div>
+</div>
+</section>
+
+<!-- CONTACT (FIXED) -->
+<section class="py-20" data-aos="fade-up">
+<div class="max-w-xl mx-auto px-6">
+<h2 class="text-3xl font-bold text-center">{{ t.contact }}</h2>
+
+<form @submit.prevent="sendEmail" class="mt-10 space-y-4">
+<input v-model="form.name" required placeholder="Nombre / Name" class="input">
+<input v-model="form.email" type="email" required placeholder="Email" class="input">
+<textarea v-model="form.msg" required placeholder="Mensaje / Message" class="input h-32"></textarea>
+
+<button :disabled="loading"
+class="w-full bg-primary py-3 rounded font-semibold flex justify-center items-center gap-2">
+
+<span v-if="!loading">{{ t.send }}</span>
+<span v-else class="animate-pulse">...</span>
+
+</button>
+</form>
+
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer class="text-center py-6 text-gray-500 border-t border-gray-800">
+© 2026 Héctor Gallegos
+</footer>
+
+<!-- BACK TO TOP -->
+<button @click="top" class="fixed bottom-6 right-6 bg-primary p-3 rounded-full">↑</button>
+
+<!-- MUSIC -->
+<audio autoplay loop>
+<source src="https://www.bensound.com/bensound-music/bensound-creativeminds.mp3">
+</audio>
+
+</div>
+
+<style>
+.input{ @apply w-full bg-gray-900 border border-gray-700 p-3 rounded focus:border-primary outline-none }
+</style>
+
+<script>
+const { createApp } = Vue
+
+createApp({
+data(){
+return{
+lang:'es',
+loading:false,
+form:{name:'',email:'',msg:''},
+skills:[
+{name:'Python',icon:'fab fa-python'},
+{name:'JavaScript',icon:'fab fa-js'},
+{name:'HTML',icon:'fab fa-html5'},
+{name:'CSS',icon:'fab fa-css3-alt'},
+{name:'PHP',icon:'fab fa-php'},
+{name:'Ruby',icon:'fas fa-gem'},
+{name:'Linux',icon:'fab fa-linux'}
+],
+projects:[
+{name:'AI Task Manager',desc:'Gestión inteligente de tareas.',tech:'Python + Flask'},
+{name:'Portfolio Engine',desc:'Generador dinámico.',tech:'Vue + Tailwind'},
+{name:'Game Tracker',desc:'Stats gamer.',tech:'JS + API'},
+{name:'Dev Dashboard',desc:'Panel dev.',tech:'PHP + MySQL'},
+{name:'Automation Bot',desc:'Automatización.',tech:'Python'},
+{name:'Realtime Chat',desc:'Chat en vivo.',tech:'Node + Socket'}
+],
+exp:[
+{title:'Frontend Developer',desc:'Interfaces modernas.'},
+{title:'Team Leader',desc:'Gestión de equipos.'},
+{title:'Freelancer',desc:'Soluciones web.'}
+]
+}
+},
+computed:{
+t(){
+return this.lang==='es'?{
+heroSub:'Desarrollador enfocado en soluciones modernas.',
+about:'Sobre mí',
+aboutText:'Ingeniero en informática con liderazgo y pasión por la tecnología.',
+skills:'Habilidades',
+projects:'Proyectos',
+exp:'Experiencia',
+interests:'Intereses',
+contact:'Contacto',
+send:'Enviar'
+}:{
+heroSub:'Developer focused on modern solutions.',
+about:'About Me',
+aboutText:'Computer engineer with leadership.',
+skills:'Skills',
+projects:'Projects',
+exp:'Experience',
+interests:'Interests',
+contact:'Contact',
+send:'Send'
+}
+}
+},
+methods:{
+toggleLang(){this.lang=this.lang==='es'?'en':'es'},
+toggleTheme(){document.documentElement.classList.toggle('dark')},
+top(){window.scrollTo({top:0,behavior:'smooth'})},
+
+async sendEmail(){
+if(!this.form.name || !this.form.email || !this.form.msg){
+return Swal.fire('Completa todos los campos')
+}
+
+this.loading=true
+
+try{
+emailjs.init("YOUR_PUBLIC_KEY")
+
+await emailjs.send(
+"YOUR_SERVICE_ID",
+"YOUR_TEMPLATE_ID",
+{
+from_name:this.form.name,
+reply_to:this.form.email,
+message:this.form.msg
+}
+)
+
+Swal.fire('Mensaje enviado 🚀')
+this.form={name:'',email:'',msg:''}
+
+}catch(e){
+Swal.fire('Error ❌')
+}
+
+this.loading=false
+}
+},
+mounted(){
+new Typed('#typed',{
+strings:['Ingeniero en Informática','Full Stack Developer','Problem Solver'],
+typeSpeed:50,backSpeed:25,loop:true
+})
+
+tsParticles.load("tsparticles",{particles:{number:{value:60},color:{value:"#06b6d4"},move:{enable:true,speed:1}}})
+
+AOS.init({once:true})
+}
+}).mount('#app')
+</script>
+
+</body>
+</html>
